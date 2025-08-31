@@ -1,3 +1,4 @@
+//go:build go1.18
 // +build go1.18
 
 package luhn
@@ -8,7 +9,7 @@ import (
 )
 
 func FuzzValidate(f *testing.F) {
-	// Add seed corpus - various valid and invalid credit card numbers
+	// Añadir corpus semilla - varios números de tarjeta de crédito válidos e inválidos
 	testcases := []string{
 		"4532015112830366",
 		"5425233430109903",
@@ -34,16 +35,16 @@ func FuzzValidate(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, input string) {
-		// The function should not panic
+		// La función no debe entrar en pánico
 		result := Validate(input)
 
-		// Property: result should be deterministic
+		// Propiedad: el resultado debe ser determinístico
 		result2 := Validate(input)
 		if result != result2 {
-			t.Errorf("Non-deterministic result for input %q: first=%v, second=%v", input, result, result2)
+			t.Errorf("Resultado no determinístico para la entrada %q: primero=%v, segundo=%v", input, result, result2)
 		}
 
-		// Property: if valid, must have at least 2 digits
+		// Propiedad: si es válido, debe tener al menos 2 dígitos
 		if result {
 			digitCount := 0
 			for _, r := range input {
@@ -52,11 +53,11 @@ func FuzzValidate(f *testing.F) {
 				}
 			}
 			if digitCount <= 1 {
-				t.Errorf("Validated with only %d digits: %q", digitCount, input)
+				t.Errorf("Validado con solo %d dígitos: %q", digitCount, input)
 			}
 		}
 
-		// Property: if it contains non-digit, non-space, non-dash characters, it should be invalid
+		// Propiedad: si contiene caracteres que no son dígitos, espacios o guiones, debe ser inválido
 		hasInvalidChar := false
 		for _, r := range input {
 			if !unicode.IsDigit(r) && r != ' ' && r != '-' {
@@ -65,10 +66,10 @@ func FuzzValidate(f *testing.F) {
 			}
 		}
 		if hasInvalidChar && result {
-			t.Errorf("Validated despite invalid characters: %q", input)
+			t.Errorf("Validado a pesar de caracteres inválidos: %q", input)
 		}
 
-		// Property: empty or single digit should always be invalid
+		// Propiedad: vacío o un solo dígito siempre debe ser inválido
 		cleaned := ""
 		for _, r := range input {
 			if unicode.IsDigit(r) {
@@ -76,13 +77,13 @@ func FuzzValidate(f *testing.F) {
 			}
 		}
 		if len(cleaned) <= 1 && result {
-			t.Errorf("Validated with %d digits (should need at least 2): %q", len(cleaned), input)
+			t.Errorf("Validado con %d dígitos (debería necesitar al menos 2): %q", len(cleaned), input)
 		}
 	})
 }
 
 func FuzzGenerate(f *testing.F) {
-	// Seed corpus
+	// Corpus semilla
 	testcases := []string{
 		"453201511283036",
 		"542523343010990",
@@ -99,10 +100,10 @@ func FuzzGenerate(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, input string) {
-		// The function should not panic
+		// La función no debe entrar en pánico
 		result := Generate(input)
 
-		// If input contains non-digits (except spaces and dashes), result should be empty
+		// Si la entrada contiene no-dígitos (excepto espacios y guiones), el resultado debe estar vacío
 		hasInvalidChar := false
 		for _, r := range input {
 			if !unicode.IsDigit(r) && r != ' ' && r != '-' {
@@ -113,18 +114,18 @@ func FuzzGenerate(f *testing.F) {
 
 		if hasInvalidChar {
 			if result != "" {
-				t.Errorf("Generate should return empty for invalid input %q, got %q", input, result)
+				t.Errorf("Generate debería retornar vacío para entrada inválida %q, obtuvo %q", input, result)
 			}
 			return
 		}
 
-		// If we got a result, it should be valid
+		// Si obtuvimos un resultado, debe ser válido
 		if result != "" {
 			if !Validate(result) {
-				t.Errorf("Generate(%q) produced invalid number: %q", input, result)
+				t.Errorf("Generate(%q) produjo un número inválido: %q", input, result)
 			}
 
-			// The result should start with the cleaned input digits
+			// El resultado debe empezar con los dígitos limpios de la entrada
 			cleaned := ""
 			for _, r := range input {
 				if unicode.IsDigit(r) {
@@ -133,14 +134,14 @@ func FuzzGenerate(f *testing.F) {
 			}
 
 			if cleaned != "" && len(result) != len(cleaned)+1 {
-				t.Errorf("Generate(%q) should append exactly one digit, got %q", input, result)
+				t.Errorf("Generate(%q) debería añadir exactamente un dígito, obtuvo %q", input, result)
 			}
 		}
 	})
 }
 
 func FuzzRoundTrip(f *testing.F) {
-	// Test that Generate followed by Validate always returns true
+	// Prueba que Generate seguido de Validate siempre retorna true
 	testcases := []string{
 		"453201511283036",
 		"542523343010990",
@@ -156,7 +157,7 @@ func FuzzRoundTrip(f *testing.F) {
 	}
 
 	f.Fuzz(func(t *testing.T, input string) {
-		// Clean input to only digits
+		// Limpiar entrada para obtener solo dígitos
 		cleaned := ""
 		for _, r := range input {
 			if unicode.IsDigit(r) {
@@ -165,18 +166,18 @@ func FuzzRoundTrip(f *testing.F) {
 		}
 
 		if cleaned == "" {
-			return // Skip empty inputs
+			return // Saltar entradas vacías
 		}
 
-		// Generate a valid number
+		// Generar un número válido
 		generated := Generate(cleaned)
 		if generated == "" {
-			return // Generation failed, which is OK for invalid input
+			return // La generación falló, lo cual está bien para entrada inválida
 		}
 
-		// The generated number must be valid
+		// El número generado debe ser válido
 		if !Validate(generated) {
-			t.Errorf("Round trip failed: Generate(%q) = %q, but Validate returned false", cleaned, generated)
+			t.Errorf("Prueba de ida y vuelta falló: Generate(%q) = %q, pero Validate retornó false", cleaned, generated)
 		}
 	})
 }

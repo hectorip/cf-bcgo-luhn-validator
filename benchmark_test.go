@@ -36,12 +36,10 @@ func BenchmarkValidateSizes(b *testing.B) {
 		name   string
 		number string
 	}{
-		{"14digits", "30569309025904"},        // Diners Club
 		{"15digits", "371449635398431"},       // American Express
 		{"16digits", "4532015112830366"},      // Visa
 		{"16digitsSpaces", "4532 0151 1283 0366"},
 		{"16digitsDashes", "4532-0151-1283-0366"},
-		{"19digits", "6011000990139424543"},   // Some Discover cards
 	}
 
 	for _, size := range sizes {

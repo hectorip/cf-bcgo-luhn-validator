@@ -2,34 +2,35 @@
 
 Implementación del algoritmo de Luhn en Go para validación de tarjetas de crédito y otros números de identificación.
 
-## 📋 Descripción
+## Descripción
 
 El algoritmo de Luhn (también conocido como algoritmo de "módulo 10") es un checksum simple usado para validar una variedad de números de identificación, como números de tarjetas de crédito, números IMEI, números de identificación nacional en muchos países, etc.
 
 Este proyecto es un ejemplo educativo que demuestra:
-- 📦 Organización de código en paquetes Go
-- 🔧 Uso de Go Modules
-- 🧪 Testing completo (unitario, benchmarks, fuzzing, ejemplos)
-- 📊 Análisis de cobertura
-- 🏗️ Estructura de proyecto idiomática
 
-## 🚀 Instalación
+- Organización de código en paquetes Go
+- Uso de Go Modules
+- Testing completo (unitario, benchmarks, fuzzing, ejemplos)
+- Análisis de cobertura
+- Estructura de proyecto idiomática
+
+## Instalación
 
 ### Como biblioteca
 
 ```bash
-go get github.com/example/luhn-validator
+go get github.com/hectorip/cf-bcgo-luhn-validator
 ```
 
 ### Para desarrollo
 
 ```bash
-git clone https://github.com/example/luhn-validator
-cd luhn-validator
+git clone https://github.com/hectorip/cf-bcgo-luhn-validator
+cd cf-bcgo-luhn-validator
 go mod download
 ```
 
-## 💻 Uso
+## Uso
 
 ### Como biblioteca en tu código
 
@@ -38,7 +39,7 @@ package main
 
 import (
     "fmt"
-    "github.com/example/luhn-validator"
+    "github.com/hectorip/cf-bcgo-luhn-validator"
 )
 
 func main() {
@@ -59,37 +60,7 @@ func main() {
 }
 ```
 
-### API
-
-#### `Validate(number string) bool`
-
-Valida si un string cumple con el algoritmo de Luhn.
-
-- **Entrada**: String con el número a validar (puede contener espacios y guiones)
-- **Salida**: `true` si es válido, `false` si no lo es
-- **Nota**: Los espacios y guiones son ignorados durante la validación
-
-```go
-luhn.Validate("4532015112830366")      // true
-luhn.Validate("4532 0151 1283 0366")   // true
-luhn.Validate("4532-0151-1283-0366")   // true
-luhn.Validate("1234567890123456")      // false
-```
-
-#### `Generate(number string) string`
-
-Genera un número válido agregando el dígito de control apropiado.
-
-- **Entrada**: String con el número base (sin dígito de control)
-- **Salida**: String con el número completo incluyendo el dígito de control
-- **Nota**: Retorna string vacío si la entrada contiene caracteres inválidos
-
-```go
-luhn.Generate("453201511283036")    // "4532015112830366"
-luhn.Generate("4532 0151 1283 036") // "4532015112830366"
-```
-
-## 🧪 Testing
+## Testing
 
 ### Ejecutar todos los tests
 
