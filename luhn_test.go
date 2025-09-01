@@ -10,7 +10,7 @@ func TestValidate(t *testing.T) {
 		number   string
 		expected bool
 	}{
-		// Valid credit card numbers
+		// Válidos
 		{"valid Visa", "4532015112830366", true},
 		{"valid Visa with spaces", "4532 0151 1283 0366", true},
 		{"valid Visa with dashes", "4532-0151-1283-0366", true},
@@ -21,7 +21,7 @@ func TestValidate(t *testing.T) {
 		{"valid Diners Club", "30569309025904", true},
 		{"valid JCB", "3530111333300000", true},
 
-		// Invalid numbers
+		// Inválidos
 		{"invalid checksum", "4532015112830367", false},
 		{"invalid MasterCard", "5425233430109904", false},
 		{"single digit", "5", false},
@@ -34,10 +34,10 @@ func TestValidate(t *testing.T) {
 		{"mixed invalid chars", "4532-0151-ABCD-0366", false},
 		{"too short", "1", false},
 
-		// Edge cases
+		// Casos extremos
 		{"two digits valid", "59", true},
 		{"two digits invalid", "58", false},
-		{"all zeros", "0000000000000000", true}, // Actually valid per Luhn algorithm
+		{"all zeros", "0000000000000000", true}, // En realidad es válido según el algoritmo de Luhn
 		{"number with trailing spaces", "4532015112830366  ", true},
 		{"number with leading spaces", "  4532015112830366", true},
 		{"mixed spaces and dashes", "4532 0151-1283 0366", true},
@@ -54,7 +54,7 @@ func TestValidate(t *testing.T) {
 }
 
 func TestChecksum(t *testing.T) {
-	// Test the internal checksum function with clean numbers
+	// Prueba la función de checksum interna con números limpios
 	testCases := []struct {
 		name     string
 		number   string
@@ -101,25 +101,25 @@ func TestGenerate(t *testing.T) {
 
 			if !tt.shouldBeValid {
 				if result != "" {
-					t.Errorf("Generate(%q) should return empty string for invalid input, got %q", tt.input, result)
+					t.Errorf("Generate(%q) debería retornar una cadena vacía para entrada inválida, obtuvo %q", tt.input, result)
 				}
 				return
 			}
 
 			// Check if the generated number ends with expected suffix
 			if len(result) > 0 && result[len(result)-1:] != tt.expectedSuffix {
-				t.Errorf("Generate(%q) = %q, expected to end with %s", tt.input, result, tt.expectedSuffix)
+				t.Errorf("Generate(%q) = %q, debería terminar con %s", tt.input, result, tt.expectedSuffix)
 			}
 
-			// Verify the generated number is valid
+			// Verificar que el número generado sea válido
 			if !Validate(result) {
-				t.Errorf("Generate(%q) = %q, which is not a valid Luhn number", tt.input, result)
+				t.Errorf("Generate(%q) = %q, que no es un número de Luhn válido", tt.input, result)
 			}
 		})
 	}
 }
 
-// Test concurrent access to ensure thread safety
+// Prueba de acceso concurrente para asegurar thread safety
 func TestValidateConcurrent(t *testing.T) {
 	numbers := []string{
 		"4532015112830366",
@@ -128,7 +128,7 @@ func TestValidateConcurrent(t *testing.T) {
 		"1234567890123456",
 	}
 
-	// Run validation concurrently
+	// Ejecutar validación concurrentemente
 	done := make(chan bool)
 	for i := 0; i < 100; i++ {
 		go func(n int) {
@@ -138,7 +138,7 @@ func TestValidateConcurrent(t *testing.T) {
 		}(i)
 	}
 
-	// Wait for all goroutines to complete
+	// Esperar a que todas las goroutines completen
 	for i := 0; i < 100; i++ {
 		<-done
 	}

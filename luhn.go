@@ -1,5 +1,3 @@
-// Package luhn implements the Luhn algorithm for validation of credit card numbers
-// and other identification numbers.
 package luhn
 
 import (
